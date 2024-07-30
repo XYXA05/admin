@@ -1,0 +1,6 @@
+[server]
+port = 8501
+baseUrlPath = "/admineono/"
+
+[browser]
+serverAddress = "https://admine.mark-build.com"

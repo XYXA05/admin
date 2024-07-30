@@ -1,6 +1,5 @@
 [server]
-port = 8501
-baseUrlPath = "/admineono/"
+port = 80
 
 [browser]
 serverAddress = "admin.mark-build.com"

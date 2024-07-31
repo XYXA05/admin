@@ -1,8 +1,7 @@
 [server]
-port = 80
-baseUrlPath = "/"
-enableStaticServing = true
+port = 70
+baseUrlPath = "/alien/"
 
 [browser]
 serverAddress = "admin.mark-build.com"
-serverPort = 80
+serverPort = 70

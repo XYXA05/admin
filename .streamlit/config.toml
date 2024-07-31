@@ -1,14 +1,6 @@
 [server]
-headless = true
-enableCORS = true  # Enable CORS to allow cross-origin requests
-enableXsrfProtection = true  # Enable XSRF protection for security
-port = 80  # Port 80 is standard for HTTP; if using HTTPS, this might need to be changed
+port = 80
 baseUrlPath = "/url_path/"
 
-[general]
-email = "bogdansavi05@gmail.com"
-
-[cors]
-allowedOrigins = [
-  "https://ic8sk8o.mark-build.com"
-]
+[browser]
+serverAddress = "1.1.1.1"

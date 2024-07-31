@@ -1,7 +1,15 @@
 [server]
-port = 70
-baseUrlPath = "/alien/"
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+port = 8501  # Default Streamlit port, can be changed if needed
+address = "0.0.0.0"  # Listens on all network interfaces
 
-[browser]
-serverAddress = "admin.mark-build.com"
-serverPort = 70
+[general]
+email = "bogdansavi05@gmail.com"
+
+[cors]
+# Comma-separated list of allowed origins for CORS.
+allowedOrigins = [
+  "https://ic8sk8o.mark-build.com"
+]

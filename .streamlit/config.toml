@@ -2,7 +2,7 @@
 headless = true
 enableCORS = false
 enableXsrfProtection = false
-port = 8501  # Default Streamlit port, can be changed if needed
+port = 80  # Default Streamlit port, can be changed if needed
 address = "0.0.0.0"  # Listens on all network interfaces
 
 [general]

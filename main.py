@@ -138,7 +138,7 @@ if st.session_state['logged_in']:
         ]
 
     def upload_file_user(item_id, position, files):
-        url = f"http://localhost:8000/upload_file_compan/{item_id}?position={position}"
+        url = f"https://usskkwk.mark-build.com/upload_file_compan/{item_id}?position={position}"
         response = requests.post(url, files=files)
         return response.json()
 
@@ -241,7 +241,7 @@ if st.session_state['logged_in']:
     def upload_item_photo(date, file, item_id):
         files = {"files": (file.name, file.getvalue(), file.type)}
         data = {"date": date}
-        url = f"http://localhost:8000/upload/{item_id}"
+        url = f"https://usskkwk.mark-build.com/upload/{item_id}"
         response = requests.post(url, files=files, data=data)
         return response.json()
 
@@ -301,7 +301,7 @@ if st.session_state['logged_in']:
     # Function to upload the description photo
     def upload_description_photo_file(item_create_about_id, file):
         files = {"files": (file.name, file.getvalue(), file.type)}
-        url = f"http://localhost:8000//upload_file_about/{item_create_about_id}"
+        url = f"https://usskkwk.mark-build.com//upload_file_about/{item_create_about_id}"
         response = requests.post(url, files=files)
         return response.json()
 
@@ -329,7 +329,7 @@ if st.session_state['logged_in']:
         return session.query(File_new_build_apartment).join(ItemCreate).filter(ItemCreate.owner_id == user.id).all()
 
     def upload_file_items(new_build_apartment_id, position, files):
-        url = f"http://localhost:8000/upload/{new_build_apartment_id}?position={position}"
+        url = f"https://usskkwk.mark-build.com/upload/{new_build_apartment_id}?position={position}"
         response = requests.post(url, files=files)
         return response.json()
     def delete_file_items(file_id):
@@ -408,7 +408,7 @@ if st.session_state['logged_in']:
         ).join(ItemCreate, ItemsCreateDescription.new_build_apartment_id == ItemCreate.id).filter(ItemCreate.owner_id == user.id).all()
     def upload_description_photo(new_build_apartment_description_id, file):
         files = {"files": (file.name, file.getvalue(), file.type)}
-        url = f"http://localhost:8000/upload_description/{new_build_apartment_description_id}"
+        url = f"https://usskkwk.mark-build.com/upload_description/{new_build_apartment_description_id}"
         response = requests.post(url, files=files)
         return response.json()
 
@@ -442,7 +442,7 @@ if st.session_state['logged_in']:
     def upload_file(date, file, new_build_apartment_id):
         files = {"files": (file.name, file.getvalue(), file.type)}
         data = {"date": date}
-        url = f"http://localhost:8000/upload_monitoring_360/{new_build_apartment_id}"
+        url = f"https://usskkwk.mark-build.com/upload_monitoring_360/{new_build_apartment_id}"
         response = requests.post(url, files=files, data=data)
         return response.json()
 
@@ -553,7 +553,7 @@ if st.session_state['logged_in']:
             "namber_build_andsection": namber_build_andsection,
             "position": position
         }
-        url = f"http://localhost:8000/upload_monitoring/{new_build_apartment_id}"
+        url = f"https://usskkwk.mark-build.com/upload_monitoring/{new_build_apartment_id}"
         response = requests.post(url, files=files, data=data)
         return response.json()
 
@@ -584,7 +584,7 @@ if st.session_state['logged_in']:
     # Function to upload the description photo
     def upload_3d_model(new_build_apartment_id, file):
         files = {"files": (file.name, file.getvalue(), file.type)}
-        url = f"http://localhost:8000/3d_object/{new_build_apartment_id}"
+        url = f"https://usskkwk.mark-build.com/3d_object/{new_build_apartment_id}"
         response = requests.post(url, files=files)
         return response.json()
 
@@ -669,10 +669,10 @@ if st.session_state['logged_in']:
             df = pd.DataFrame(file_data)
 
             # Replace 'owner_id' column with 'title_company' for display
-            df_display = df.copy()
-            df_display['title_company'] = df_display.pop('title_company')
+            #df_display = df.copy()
+            #df_display['title_company'] = df_display.pop('title_company')
             
-            edited_df = st.data_editor(df_display)
+            edited_df = st.data_editor(df)
 
             if not df.equals(edited_df):
                 for index, row in edited_df.iterrows():
@@ -711,10 +711,10 @@ if st.session_state['logged_in']:
             df = pd.DataFrame(news_data)
 
             # Replace 'owner_id' column with 'title_company' for display
-            df_display = df.copy()
-            df_display['title_company'] = df_display.pop('title_company')
+            #df_display = df.copy()
+            #df_display['title_company'] = df_display.pop('title_company')
 
-            edited_df = st.data_editor(df_display)
+            edited_df = st.data_editor(df)
 
             if not df.equals(edited_df):
                 for index, row in edited_df.iterrows():

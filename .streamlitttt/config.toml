@@ -3,4 +3,4 @@ port = 80
 baseUrlPath = "/url_path/"
 
 [browser]
-serverAddress = "1.1.1.1"
+serverAddress = "0.0.0.0"

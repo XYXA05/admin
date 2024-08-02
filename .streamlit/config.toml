@@ -1,6 +1,6 @@
 [server]
 port = 80
-baseUrlPath = "/url_path/"
+baseUrlPath = "/admins/"
 
 [browser]
 serverAddress = "0.0.0.0"

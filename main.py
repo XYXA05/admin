@@ -630,7 +630,7 @@ if st.session_state['logged_in']:
 
 
     if choice == "Users":
-            st.subheader("Manage Users")
+            st.subheader("Setting up a user card and change")
             user_data = []
 
             users = get_users()
@@ -664,7 +664,7 @@ if st.session_state['logged_in']:
                     updated_data = {column: row[column] for column in df.columns if column != 'id'}
                     update_user(row['id'], updated_data)
 
-            st.subheader("Manage Files")
+            st.subheader("Manage user video")
             file_data = get_files()
             df = pd.DataFrame(file_data)
 
@@ -684,14 +684,14 @@ if st.session_state['logged_in']:
                     update_file(row['id'], updated_data)
 
             # Add file
-            st.subheader("Add File")
+            st.subheader("Add user Video(position select every 1)")
             item_ids = get_items_ids()
             item_id_map = {item.id: item.title_company for item in item_ids}
 
             with st.form("add_file_form"):
                 position = st.number_input("Position", step=1)
                 item_id = st.selectbox("Owner", options=list(item_id_map.keys()), format_func=lambda x: item_id_map[x])
-                file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png", "pdf", "mp4", "avi", "mov"])  # Allow video uploads
+                file = st.file_uploader("Choose a file", type=["mp4", "avi", "mov"])  # Allow video uploads
                 submitted = st.form_submit_button("Upload File")
 
                 if submitted:
@@ -699,14 +699,14 @@ if st.session_state['logged_in']:
                     upload_file_user(item_id, position, files)
 
             # Delete file
-            st.subheader("Delete File")
+            st.subheader("Delete video user")
             delete_file_id = st.number_input("File ID to Delete", step=1)
             if st.button("Delete File"):
                 delete_file(delete_file_id)
 
             # Add news
     if choice == "Users":    
-            st.subheader("Manage News")
+            st.subheader("Manage news company")
             news_data = get_news()
             df = pd.DataFrame(news_data)
 
@@ -726,7 +726,7 @@ if st.session_state['logged_in']:
                     update_news(row['id'], updated_data)
 
             # Add news
-            st.subheader("Add News")
+            st.subheader("Add news comany")
             item_ids = get_items_ids()
             item_id_map = {item.id: item.title_company for item in item_ids}
 
@@ -749,7 +749,7 @@ if st.session_state['logged_in']:
                     add_news(news_data)
 
             # Delete news
-            st.subheader("Delete News")
+            st.subheader("Delete news company")
             delete_news_id = st.number_input("News ID to Delete", step=1)
             if st.button("Delete News"):
                 delete_news(delete_news_id)
@@ -785,7 +785,7 @@ if st.session_state['logged_in']:
 
 
     elif choice == "Items":
-        st.subheader("Manage Items")
+        st.subheader("Manage Project and change information")
 
         user_data = []
         items = get_items()
@@ -829,7 +829,7 @@ if st.session_state['logged_in']:
                 item_data = {column: row[column] for column in df.columns if column != 'owner_title_company'}
                 update_item(item_data)
 
-        st.subheader("Add Item")
+        st.subheader("Add Project")
         with st.form("add_item_form"):
             title = st.text_input("Title")
             position = st.number_input("Position", step=1)
@@ -887,7 +887,7 @@ if st.session_state['logged_in']:
                 }
                 add_item(item_data)
 
-        st.subheader("Delete Item")
+        st.subheader("Delete Project")
         with st.form("delete_item_form"):
             delete_id = st.number_input("ID to delete", step=1)
             delete_submitted = st.form_submit_button("Delete Item")
@@ -896,7 +896,7 @@ if st.session_state['logged_in']:
 
 
 
-        st.subheader("Manage Items")
+        st.subheader("Manage video project")
 
         user_data = []
         items = get_file_items()
@@ -922,19 +922,19 @@ if st.session_state['logged_in']:
                 updated_data = {column: row[column] for column in df.columns if column not in ['id', 'new_build_apartment_title']}
                 update_file_items(row['id'], updated_data)
 
-        st.subheader("Add File")
+        st.subheader("Add video project")
         with st.form("add_file_form"):
             position = st.number_input("Position", step=1)
             new_build_apartment_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("New Build Apartment", options=new_build_apartment_ids, format_func=lambda x: x[1])
-            file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png", "pdf", "mp4", "avi", "mov"])
+            file = st.file_uploader("Choose a file(but video shoid be 1:1 size)", type=["mp4", "avi", "mov"])
             submitted = st.form_submit_button("Upload File")
 
             if submitted:
                 files = [("files", (file.name, file.getvalue(), file.type))]
                 upload_file_items(new_build_apartment_id[0], position, files)
 
-        st.subheader("Delete File")
+        st.subheader("Delete video project")
         delete_file_id = st.number_input("File ID to Delete", step=1)
         if st.button("Delete File"):
             delete_file_items(delete_file_id)
@@ -1067,7 +1067,7 @@ if st.session_state['logged_in']:
 
 
     elif choice == "Items Create Description":
-        st.subheader("Manage Items Create Description")
+        st.subheader("Manage plan")
         user_data = []
 
         users = get_items_create_description()
@@ -1102,7 +1102,7 @@ if st.session_state['logged_in']:
                     item_data = row.to_dict()
                     update_items_create_description(item_data)
 
-        st.subheader("Add Item")
+        st.subheader("Add plan")
         with st.form("add_item_form"):
             type_items = st.text_input("Type Items")
             price_one_meter = st.number_input("Price per Meter", min_value=0)
@@ -1182,7 +1182,7 @@ if st.session_state['logged_in']:
                 update_file_description(new_build_apartment_description_id, updated_data)
 
         # Add file
-        st.subheader("Add File")
+        st.subheader("Add photo plan")
         with st.form("add_file_form"):
             new_build_apartment_ids = get_items_create_description()
             formatted_options = [
@@ -1248,7 +1248,7 @@ if st.session_state['logged_in']:
                     }
                     update_aerial_survey_360(item_aerial_survey_360)
 
-        st.subheader("Add File")
+        st.subheader("Add panorama 360 photo")
         with st.form("upload_file_form"):
             date = st.date_input("Date")
             new_build_apartment_ids = get_new_build_apartment_ids()
@@ -1325,7 +1325,7 @@ if st.session_state['logged_in']:
                     }
                     update_apartment_construction_monitoring(row['id'], item_document_title)
 
-        st.subheader("Add Item")
+        st.subheader("Add photo construction monitoring")
         with st.form("add_item_form"):
             position = st.number_input('Position', step=1)
             date = st.text_input('Date')
@@ -1346,7 +1346,7 @@ if st.session_state['logged_in']:
             selected_option = st.selectbox("Number Build and Section", options=options, format_func=lambda x: x[1])
             # selected_option[0] will give the `namber_build_andsection` value
             namber_build_andsection = selected_option[0]
-            file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png", "pdf", "mp4", "avi", "mov"])  # Allow video uploads
+            file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png"])  # Allow video uploads
             new_build_apartment_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("New Build Apartment Title", options=new_build_apartment_ids, format_func=lambda x: x[1])
             submitted = st.form_submit_button("Add Item")
@@ -1372,7 +1372,7 @@ if st.session_state['logged_in']:
 
 
     elif choice == "Documents Title":
-        st.subheader("Manage Documents Title")
+        st.subheader("Manage documents for project")
         user_data = []
 
         users = get_documents_title()
@@ -1407,7 +1407,7 @@ if st.session_state['logged_in']:
                     }
                     update_document_title(item_document_title)
 
-        st.subheader("Add Item")
+        st.subheader("Add documents for project")
         with st.form("add_item_form"):
             title = st.text_input("Title")
             text = st.text_area("Text")
@@ -1425,7 +1425,7 @@ if st.session_state['logged_in']:
                 }
                 add_document_title(item_document_title)
 
-        st.subheader("Delete Item")
+        st.subheader("Delete documents for project")
         with st.form("delete_item_form"):
             delete_id = st.number_input("ID to delete", min_value=0, step=1)
             delete_submitted = st.form_submit_button("Delete Item")
@@ -1434,7 +1434,7 @@ if st.session_state['logged_in']:
                 delete_document_title(delete_id)
 
     elif choice == "Documents term of finansing":
-        st.subheader("Manage Documents Description")
+        st.subheader("Manage term of finansing")
         user_dataa = []
 
         userss = get_documents_title_description()
@@ -1471,7 +1471,7 @@ if st.session_state['logged_in']:
                     }
                     update_document_title_description(item_documents_title_description)
 
-        st.subheader("Add Documents Title Description")
+        st.subheader("Add term of finansing")
         with st.form("add_item_form_2"):
             title = st.text_input("Title")
             text = st.text_area("Text")
@@ -1489,7 +1489,7 @@ if st.session_state['logged_in']:
                 add_document_title_description(item_documents_title_description)
 
 
-        st.subheader("Delete Documents Title Description")
+        st.subheader("Delete term of finansing")
         with st.form("delete_item_form_2"):
             delete_id = st.number_input("ID to delete", min_value=0, step=1)
             delete_submitted = st.form_submit_button("Delete Item")

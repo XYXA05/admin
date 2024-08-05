@@ -1570,7 +1570,7 @@ if st.session_state['logged_in']:
                     st.write(f"Current status: {status}")
 
                     if status == "completed":
-                        video_url = status_response['data']['generation']['video']['url']
+                        video_url = status_response['data']['generation']['video']['url_no_watermark']
                         st.video(video_url)
                         st.write("Video created successfully!")
                         break

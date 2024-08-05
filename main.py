@@ -18,7 +18,7 @@ def create_video(image_url, image_end_url, prompt):
     payload = json.dumps({
         "image_url": image_url,
         "image_end_url": image_end_url,
-        "expand_prompt": True,
+        "expand_prompt": False,
         "prompt": prompt,
     })
     headers = {

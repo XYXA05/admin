@@ -544,7 +544,16 @@ if st.session_state['logged_in']:
 
     def get_file_apartment_construction_monitoring_ids():
         user = st.session_state['user']
-        return session.query(ItemsCreateDescription.id, ItemsCreateDescription.namber_build_andsection, ItemCreate.title).filter(ItemCreate.owner_id == user.id).all()
+        # Join ItemCreate and ItemsCreateDescription
+        results = session.query(
+            ItemsCreateDescription.id,
+            ItemsCreateDescription.namber_build_andsection,
+            ItemCreate.title
+        ).join(ItemCreate, ItemsCreateDescription.new_build_apartment_id == ItemCreate.id
+        ).filter(ItemCreate.owner_id == user.id).all()
+        
+        return results
+
     def upload_apartment_construction_monitoring(new_build_apartment_id, file, namber_build_andsection, date, position):
         files = {"files": (file.name, file.getvalue(), file.type)}
         data = {

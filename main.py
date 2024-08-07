@@ -544,13 +544,14 @@ if st.session_state['logged_in']:
 
     def get_file_apartment_construction_monitoring_ids():
         user = st.session_state['user']
-        # Join ItemCreate and ItemsCreateDescription
         results = session.query(
             ItemsCreateDescription.id,
             ItemsCreateDescription.namber_build_andsection,
             ItemCreate.title
         ).join(ItemCreate, ItemsCreateDescription.new_build_apartment_id == ItemCreate.id
         ).filter(ItemCreate.owner_id == user.id).all()
+    
+  
         
         return results
 
@@ -1342,17 +1343,17 @@ if st.session_state['logged_in']:
             date = st.text_input('Date')
             namber_build_andsectionas = get_file_apartment_construction_monitoring_ids()
             
-            # Track seen titles to remove duplicates
-            seen_titles = set()
+            seen_combinations = set()
             options = []
             for item in namber_build_andsectionas:
-                if item.title not in seen_titles:
-                    seen_titles.add(item.title)
+                combination = (item.namber_build_andsection, item.title)
+                if combination not in seen_combinations:
+                    seen_combinations.add(combination)
                     # Store a tuple (actual_value, display_value)
                     actual_value = item.namber_build_andsection
                     display_value = f"{item.namber_build_andsection} - {item.title}"
                     options.append((actual_value, display_value))
-            
+
             # Create the selectbox with the options tuple
             selected_option = st.selectbox("Number Build and Section", options=options, format_func=lambda x: x[1])
             # selected_option[0] will give the `namber_build_andsection` value

@@ -544,8 +544,7 @@ if st.session_state['logged_in']:
 
     def get_file_apartment_construction_monitoring_ids():
         user = st.session_state['user']
-        return session.query(ItemsCreateDescription.id, ItemsCreateDescription.namber_build_andsection, ItemCreate.title).filter(ItemsCreateDescription.new_build_apartment_id == user.id).distinct().all()
-
+        return session.query(ItemsCreateDescription.id, ItemsCreateDescription.namber_build_andsection, ItemCreate.title).filter(ItemCreate.owner_id == user.id).all()
     def upload_apartment_construction_monitoring(new_build_apartment_id, file, namber_build_andsection, date, position):
         files = {"files": (file.name, file.getvalue(), file.type)}
         data = {

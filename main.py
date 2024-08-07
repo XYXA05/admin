@@ -1334,13 +1334,15 @@ if st.session_state['logged_in']:
             namber_build_andsectionas = get_file_apartment_construction_monitoring_ids()
             
             # Track seen titles to remove duplicates
+            seen_titles = set()
             options = []
             for item in namber_build_andsectionas:
-
-                # Store a tuple (actual_value, display_value)
-                actual_value = item.namber_build_andsection
-                display_value = f"{item.namber_build_andsection} - {item.title}"
-                options.append((actual_value, display_value))
+                if item.title not in seen_titles:
+                    seen_titles.add(item.title)
+                    # Store a tuple (actual_value, display_value)
+                    actual_value = item.namber_build_andsection
+                    display_value = f"{item.namber_build_andsection} - {item.title}"
+                    options.append((actual_value, display_value))
             
             # Create the selectbox with the options tuple
             selected_option = st.selectbox("Number Build and Section", options=options, format_func=lambda x: x[1])

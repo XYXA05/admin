@@ -732,9 +732,9 @@ if st.session_state['logged_in']:
             item_id_map = {item.id: item.title_company for item in item_ids}
 
             with st.form("add_news_form"):
-                title = st.text_input("Title")
+                title = st.text_input("Title (symbols 50)")
                 date = st.date_input("Date")
-                text = st.text_input("Text")
+                text = st.text_input("Text (symbols 255)")
                 link = st.text_input("Link")
                 owner_id = st.selectbox("Owner", options=list(item_id_map.keys()), format_func=lambda x: item_id_map[x])
                 submitted = st.form_submit_button("Add News")
@@ -831,27 +831,27 @@ if st.session_state['logged_in']:
                 item_data = {column: row[column] for column in df.columns if column != 'owner_title_company'}
                 update_item(item_data)
 
-        st.subheader("Add Project")
+        st.subheader("Add Project (to make paragraphs you need to do this <p>text<p> <p>text<p>)")
         with st.form("add_item_form"):
-            title = st.text_input("Title")
+            title = st.text_input("Title (symbols 30)")
             position = st.number_input("Position", step=1)
-            description_text = st.text_area("Description Text")
+            description_text = st.text_area("Description Text (symbols 4000)")
             price_hi = st.number_input("High Price", step=1)
             price_low = st.number_input("Low Price", step=1)
-            city = st.text_input("City")
-            line_adres = st.text_input("Address Line")
-            class_bulding = st.text_input("Building Class")
+            city = st.text_input("City (symbols 30)")
+            line_adres = st.text_input("Address Line (symbols 40)")
+            class_bulding = st.text_input("Building Class (symbols 20)")
             houses = st.number_input("Houses", step=1)
-            number_of_storeys = st.number_input("Number of Storeys", step=1)
-            construction_technology = st.text_input("Construction Technology")
-            walls = st.text_input("Walls")
-            insulation = st.text_input("Insulation")
-            heating = st.text_input("Heating")
-            ceiling_height = st.text_input("Ceiling Height")
+            number_of_storeys = st.number_input("Number of Storeys (symbols 20)", step=1)
+            construction_technology = st.text_input("Construction Technology (symbols 20)")
+            walls = st.text_input("Walls (symbols 25)")
+            insulation = st.text_input("Insulation (symbols 30)")
+            heating = st.text_input("Heating (symbols 40)")
+            ceiling_height = st.text_input("Ceiling Height (symbols 30)")
             number_of_flats = st.number_input("Number of Flats", step=1)
-            apartment_condition = st.text_input("Apartment Condition")
-            territory = st.text_input("Territory")
-            car_park = st.text_input("Car Park")
+            apartment_condition = st.text_input("Apartment Condition (symbols 30)")
+            territory = st.text_input("Territory (symbols 30)")
+            car_park = st.text_input("Car Park (symbols 20)")
             lng = st.text_input("Lng")
             lat = st.text_input("Lat")
             
@@ -943,7 +943,7 @@ if st.session_state['logged_in']:
 
 
 
-        st.subheader("Manage Items create about")
+        st.subheader("Manage More about this project")
         user_dataa = []
         new_build_apartment_map = {item.id: item.title for item in get_items()}
 
@@ -978,9 +978,9 @@ if st.session_state['logged_in']:
                     }
                     update_item_create_about(item_create_about)
 
-        st.subheader("Add Documents Title Description")
+        st.subheader("Add More about this project")
         with st.form("add_item_form_2"):
-            dascription = st.text_input("Title")
+            dascription = st.text_input("Title (symbols 50)")
             link = st.text_input("Link")
             documents_title_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("Documents Title ID", options=documents_title_ids, format_func=lambda x: x[1])
@@ -993,7 +993,7 @@ if st.session_state['logged_in']:
                 }
                 add_item_create_about(item_create_about)
 
-        st.subheader("Delete Documents Title Description")
+        st.subheader("Delete More about this project")
         with st.form("delete_item_form_2"):
             delete_item_create_about_id = st.number_input("ID to delete", min_value=0, step=1)
             delete_submitted = st.form_submit_button("Delete Item")
@@ -1005,7 +1005,7 @@ if st.session_state['logged_in']:
 
 
 
-        st.subheader("Manage file description")
+        st.subheader("Manage image More about this project")
         user_dataa = []
 
         users = get_file_description_file_ids()
@@ -1035,7 +1035,7 @@ if st.session_state['logged_in']:
                 update_file_description_file(item_create_about_id, updated_data)
 
             # Add file
-        st.subheader("Add File for items create")
+        st.subheader("Add image More about this project")
         with st.form("Add File for items create"):
             new_build_apartment_ids = get_file_description_file_ids()
             formatted_options = [(item.id, f"{item.dascription} - {item.title}") for item in new_build_apartment_ids]
@@ -1048,7 +1048,7 @@ if st.session_state['logged_in']:
                 upload_description_photo_file(item_create_about_id[0], file)
 
             # Delete file
-        st.subheader("Delete File for Items")
+        st.subheader("Delete image More about this project")
         item_create_about_id = st.number_input("File ID to Delete", step=0)
         if st.button("Delete File for Items"):
             delete_file_description_file(item_create_about_id)
@@ -1106,15 +1106,15 @@ if st.session_state['logged_in']:
 
         st.subheader("Add plan")
         with st.form("add_item_form"):
-            type_items = st.text_input("Type Items")
+            type_items = st.text_input("Type Items (symbols 20)")
             price_one_meter = st.number_input("Price per Meter", min_value=0)
             all_meter_in_item = st.number_input("All Meter in Item", min_value=0)
             all_price_items = st.number_input("All Price", min_value=0)
             namber_build_andsection = st.text_input("Number Build and Section")
-            floors = st.text_input("Floors")
-            state = st.text_input("State")
-            input_term = st.text_input("Input Term")
-            features = st.text_input("Features")
+            floors = st.text_input("Floors (simbols 10)")
+            state = st.text_input("State (simbols 30)")
+            input_term = st.text_input("Input Term (simbols 15)")
+            features = st.text_input("Features (simbols 30)")
             link = st.text_input("Link for 3D walk")
             new_build_apartment_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("New Build Apartment ID", options=new_build_apartment_ids, format_func=lambda x: x[1])
@@ -1327,7 +1327,7 @@ if st.session_state['logged_in']:
                     }
                     update_apartment_construction_monitoring(row['id'], item_document_title)
 
-        st.subheader("Add photo construction monitoring")
+        st.subheader("Add photo construction monitoring https://www.reduceimages.com reduce photo resolution photo long beat in horizontal position")
         with st.form("add_item_form"):
             position = st.number_input('Position', step=1)
             date = st.text_input('Date')
@@ -1409,8 +1409,8 @@ if st.session_state['logged_in']:
 
         st.subheader("Add documents for project")
         with st.form("add_item_form"):
-            title = st.text_input("Title")
-            text = st.text_area("Text")
+            title = st.text_input("Title (symbols 100)")
+            text = st.text_area("Text (symbols 255)")
             link = st.text_input("Link")
             new_build_apartment_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("New Build Apartment Title", options=new_build_apartment_ids, format_func=lambda x: x[1])
@@ -1473,8 +1473,8 @@ if st.session_state['logged_in']:
 
         st.subheader("Add term of finansing")
         with st.form("add_item_form_2"):
-            title = st.text_input("Title")
-            text = st.text_area("Text")
+            title = st.text_input("Title (symbols 100)")
+            text = st.text_area("Text (symbols 255)")
             link = st.text_input("Link")
             documents_title_ids = get_new_build_apartment_ids()
             new_build_apartment_id = st.selectbox("Documents Title ID", options=documents_title_ids, format_func=lambda x: x[1])
@@ -1550,7 +1550,7 @@ if st.session_state['logged_in']:
 
 
     if choicec == 'create video':
-        st.subheader("CREATE VIDEO")
+        st.subheader("reduce video size via: https://www.freeconvert.com/video-compressor/download Photo for the project should be with a 1:1 ratio if errors appear then just click the button again")
         with st.form("ADD IMAGE"):
             prompt = st.text_input("Prompt")
             image_url = st.text_input("Image Start URL (or only use one photo)")

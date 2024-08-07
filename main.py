@@ -649,6 +649,8 @@ if st.session_state['logged_in']:
                     'in_the_process_suburban_type': user.in_the_process_suburban_type,
                     'suburban_type': user.suburban_type,
                     'website': user.website,
+                    'weekdays': user.weekdays,
+                    'weekend': user.weekend,
                     'is_active': user.is_active
                 })
             df = pd.DataFrame(user_data)
@@ -796,6 +798,7 @@ if st.session_state['logged_in']:
                 'title': item.title,
                 'price_hi': item.price_hi,
                 'price_low': item.price_low,
+                'description_text': item.description_text,
                 'city': item.city,
                 'line_adres': item.line_adres,
                 'class_bulding': item.class_bulding,

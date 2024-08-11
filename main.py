@@ -1176,7 +1176,7 @@ if st.session_state['logged_in']:
             user_dataa.append({
                 'id': user.id,
                 'filename': user.filename,
-                'new_build_apartment_description_id': f"{description_details.get('title', '')} | {description_details.get('type_items', '')} | {description_details.get('namber_build_andsection', '')}"
+                'new_build_apartment_description_id': f"{description_details.get('title', '')}  {description_details.get('type_items', '')}  {description_details.get('namber_build_andsection', '')}"
             })
 
                 

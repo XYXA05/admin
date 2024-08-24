@@ -11,8 +11,8 @@ from sqlalchemy import create_engine
 from models import Base, Documents_Terms_of_financing, File_new_build_apartment, File_new_build_apartment_ItemCreate_about, File_new_build_apartment_construction_monitoring, ItemCreate_about, UserCreate, ItemCreate, File_description, UserCreate_File, ItemsCreateDescription, File_new_build_apartment_aerial_survey_360, Documents_title, UserCreate_News, User_3D_File_model
 import ssl
 import database
-from http.cookies import SimpleCookie
-import datetime
+from hashlib import sha256
+import streamlit.components.v1 as components
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_video(image_url, image_end_url, prompt):
@@ -57,40 +57,23 @@ session = database.SessionLocal()
 # Streamlit app
 st.title("Admin Interface")
 
+def hash_password(password):
+    return sha256(password.encode()).hexdigest()
+
 def authenticate(username, password):
-    user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password).first()
+    user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == hash_password(password)).first()
     return user
 
-def set_cookie(key, value, expires_days=7):
-    expires = datetime.datetime.now() + datetime.timedelta(days=expires_days)
-    cookie = SimpleCookie()
-    cookie[key] = value
-    cookie[key]["expires"] = expires.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-    st.set_query_params(**{"cookie": cookie.output(header="", sep="; ")})
-
-def get_cookie(key):
-    query_params = st.query_params
-    cookie_string = query_params.get("cookie", [""])[0]
-    if cookie_string:
-        cookie = SimpleCookie(cookie_string)
-        if key in cookie:
-            return cookie[key].value
-    return None
-
-def delete_cookie(key):
-    set_cookie(key, "", expires_days=-1)
-
-# Initialize session state if not already done
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['user'] = None
 
-# Check if a user is already logged in through cookies
+# To check if user data is stored in cookies
 if not st.session_state['logged_in']:
-    user_email = get_cookie("user_email")
-    user_password = get_cookie("user_password")
-    if user_email and user_password:
-        user = authenticate(user_email, user_password)
+    if 'username' in st.experimental_get_query_params() and 'password_hash' in st.experimental_get_query_params():
+        username = st.experimental_get_query_params()['username'][0]
+        password_hash = st.experimental_get_query_params()['password_hash'][0]
+        user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password_hash).first()
         if user:
             st.session_state['logged_in'] = True
             st.session_state['user'] = user
@@ -102,8 +85,8 @@ if st.session_state['logged_in']:
     if st.sidebar.button("Log Out"):
         st.session_state['logged_in'] = False
         st.session_state['user'] = None
-        delete_cookie("user_email")
-        delete_cookie("user_password")
+        # Clear cookies
+        st.experimental_set_query_params()
         st.experimental_rerun()
 
 else:
@@ -115,8 +98,8 @@ else:
         if user:
             st.session_state['logged_in'] = True
             st.session_state['user'] = user
-            set_cookie("user_email", username)
-            set_cookie("user_password", password)
+            # Set cookies
+            st.experimental_set_query_params(username=username, password_hash=hash_password(password))
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
@@ -124,11 +107,11 @@ else:
 # Continue with the rest of the app only if logged in
 if st.session_state['logged_in']:
     # Sidebar menu
-    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
-    choice = st.sidebar.selectbox("add/change/delete information", menu)
+    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title',"Documents term of financing"]
+    choice = st.sidebar.selectbox("Add or change detailed information", menu)
 
-    menuu = ['close', "create video"]
-    choicec = st.sidebar.selectbox("static", menuu)
+    menuu = ['close',"create video"]
+    choicec = st.sidebar.selectbox("Static", menuu)
 
 
 

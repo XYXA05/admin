@@ -66,10 +66,10 @@ def set_cookie(key, value, expires_days=7):
     cookie = SimpleCookie()
     cookie[key] = value
     cookie[key]["expires"] = expires.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-    st.experimental_set_query_params(**{"cookie": cookie.output(header="", sep="; ")})
+    st.set_query_params(**{"cookie": cookie.output(header="", sep="; ")})
 
 def get_cookie(key):
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
     cookie_string = query_params.get("cookie", [""])[0]
     if cookie_string:
         cookie = SimpleCookie(cookie_string)

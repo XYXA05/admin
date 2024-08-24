@@ -61,36 +61,28 @@ def authenticate(username, password):
     user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password).first()
     return user
 
-def set_cookie(name, value, days_expire=30):
-    expires = datetime.utcnow() + timedelta(days=days_expire)
-    st.session_state['cookie'] = f"{name}={value}; Expires={expires.strftime('%a, %d %b %Y %H:%M:%S GMT')}; Path=/; SameSite=Lax"
-
-def get_cookies():
-    if 'cookie' in st.session_state:
-        cookies = SimpleCookie(st.session_state['cookie'])
-    else:
-        cookies = SimpleCookie(st.request.headers.get("Cookie"))
-    return cookies
-
-def delete_cookie(name):
-    st.session_state['cookie'] = f"{name}=deleted; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Lax"
-
-# Check for existing cookies
-cookies = get_cookies()
-
-if 'logged_in' in cookies and cookies['logged_in'].value == 'true':
+def set_session(user):
     st.session_state['logged_in'] = True
-    st.session_state['user'] = cookies['user'].value
+    st.session_state['user'] = {
+        'email': user.email,
+        'title_company': user.title_company,
+    }
 
-if st.session_state.get('logged_in', False):
+def clear_session():
+    st.session_state['logged_in'] = False
+    st.session_state['user'] = None
+
+# Initialize session state if not already
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+    st.session_state['user'] = None
+
+if st.session_state['logged_in']:
     user = st.session_state['user']
-    st.sidebar.write(f"Logged in as {user}")
+    st.sidebar.write(f"Logged in as {user['title_company']}")
 
     if st.sidebar.button("Log Out"):
-        st.session_state['logged_in'] = False
-        st.session_state['user'] = None
-        delete_cookie('logged_in')
-        delete_cookie('user')
+        clear_session()
         st.experimental_rerun()
 
 else:
@@ -100,16 +92,13 @@ else:
     if st.sidebar.button("Login"):
         user = authenticate(username, password)
         if user:
-            st.session_state['logged_in'] = True
-            st.session_state['user'] = user.title_company
-            set_cookie('logged_in', 'true')
-            set_cookie('user', user.title_company)
+            set_session(user)
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
 
 # Continue with the rest of the app only if logged in
-if st.session_state.get('logged_in', False):
+if st.session_state['logged_in']:
     # Sidebar menu
     menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
     choice = st.sidebar.selectbox("add/change/delete information", menu)

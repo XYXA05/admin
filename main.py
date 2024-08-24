@@ -12,7 +12,6 @@ from models import Base, Documents_Terms_of_financing, File_new_build_apartment,
 import ssl
 import database
 from hashlib import sha256
-import streamlit.components.v1 as components
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_video(image_url, image_end_url, prompt):

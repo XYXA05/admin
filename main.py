@@ -11,8 +11,6 @@ from sqlalchemy import create_engine
 from models import Base, Documents_Terms_of_financing, File_new_build_apartment, File_new_build_apartment_ItemCreate_about, File_new_build_apartment_construction_monitoring, ItemCreate_about, UserCreate, ItemCreate, File_description, UserCreate_File, ItemsCreateDescription, File_new_build_apartment_aerial_survey_360, Documents_title, UserCreate_News, User_3D_File_model
 import ssl
 import database
-from http.cookies import SimpleCookie
-from datetime import datetime, timedelta
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_video(image_url, image_end_url, prompt):
@@ -61,28 +59,17 @@ def authenticate(username, password):
     user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password).first()
     return user
 
-def set_session(user):
-    st.session_state['logged_in'] = True
-    st.session_state['user'] = {
-        'email': user.email,
-        'title_company': user.title_company,
-    }
-
-def clear_session():
-    st.session_state['logged_in'] = False
-    st.session_state['user'] = None
-
-# Initialize session state if not already
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['user'] = None
 
 if st.session_state['logged_in']:
     user = st.session_state['user']
-    st.sidebar.write(f"Logged in as {user['title_company']}")
+    st.sidebar.write(f"Logged in as {user.title_company}")
 
     if st.sidebar.button("Log Out"):
-        clear_session()
+        st.session_state['logged_in'] = False
+        st.session_state['user'] = None
         st.experimental_rerun()
 
 else:
@@ -92,7 +79,8 @@ else:
     if st.sidebar.button("Login"):
         user = authenticate(username, password)
         if user:
-            set_session(user)
+            st.session_state['logged_in'] = True
+            st.session_state['user'] = user
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
@@ -100,10 +88,10 @@ else:
 # Continue with the rest of the app only if logged in
 if st.session_state['logged_in']:
     # Sidebar menu
-    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
-    choice = st.sidebar.selectbox("add/change/delete information", menu)
+    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title',"Documents term of finansing"]
+    choice = st.sidebar.selectbox("add change dalit information", menu)
 
-    menuu = ['close', "create video"]
+    menuu = ['close',"create video"]
     choicec = st.sidebar.selectbox("static", menuu)
 
 

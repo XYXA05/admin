@@ -11,7 +11,8 @@ from sqlalchemy import create_engine
 from models import Base, Documents_Terms_of_financing, File_new_build_apartment, File_new_build_apartment_ItemCreate_about, File_new_build_apartment_construction_monitoring, ItemCreate_about, UserCreate, ItemCreate, File_description, UserCreate_File, ItemsCreateDescription, File_new_build_apartment_aerial_survey_360, Documents_title, UserCreate_News, User_3D_File_model
 import ssl
 import database
-from hashlib import sha256
+from http.cookies import SimpleCookie
+from datetime import datetime, timedelta
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_video(image_url, image_end_url, prompt):
@@ -56,42 +57,42 @@ session = database.SessionLocal()
 # Streamlit app
 st.title("Admin Interface")
 
-def hash_password(password):
-    return sha256(password.encode()).hexdigest()
-
 def authenticate(username, password):
-    user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == hash_password(password)).first()
+    user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password).first()
     return user
 
-# Initialize session state if not already set
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
-    st.session_state['user'] = None
+def set_cookie(name, value, days_expire=30):
+    expires = datetime.utcnow() + timedelta(days=days_expire)
+    st.session_state['cookie'] = f"{name}={value}; Expires={expires.strftime('%a, %d %b %Y %H:%M:%S GMT')}; Path=/; SameSite=Lax"
 
-# Check if user data is stored in query parameters and log in if valid
-if not st.session_state['logged_in']:
-    query_params = st.query_params
-    if 'username' in query_params and 'password_hash' in query_params:
-        username = query_params['username']
-        password_hash = query_params['password_hash']
-        user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password_hash).first()
-        if user:
-            st.session_state['logged_in'] = True
-            st.session_state['user'] = user
+def get_cookies():
+    if 'cookie' in st.session_state:
+        cookies = SimpleCookie(st.session_state['cookie'])
+    else:
+        cookies = SimpleCookie(st.request.headers.get("Cookie"))
+    return cookies
 
-# If logged in, show user info and logout button
-if st.session_state['logged_in']:
+def delete_cookie(name):
+    st.session_state['cookie'] = f"{name}=deleted; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Lax"
+
+# Check for existing cookies
+cookies = get_cookies()
+
+if 'logged_in' in cookies and cookies['logged_in'].value == 'true':
+    st.session_state['logged_in'] = True
+    st.session_state['user'] = cookies['user'].value
+
+if st.session_state.get('logged_in', False):
     user = st.session_state['user']
-    st.sidebar.write(f"Logged in as {user.title_company}")
+    st.sidebar.write(f"Logged in as {user}")
 
     if st.sidebar.button("Log Out"):
         st.session_state['logged_in'] = False
         st.session_state['user'] = None
-        # Clear query parameters to log out
-        st.query_params.clear()
+        delete_cookie('logged_in')
+        delete_cookie('user')
         st.experimental_rerun()
 
-# If not logged in, show login form
 else:
     st.sidebar.subheader("Login")
     username = st.sidebar.text_input("Email")
@@ -100,21 +101,21 @@ else:
         user = authenticate(username, password)
         if user:
             st.session_state['logged_in'] = True
-            st.session_state['user'] = user
-            # Set query parameters to persist login
-            st.query_params.update({'username': username, 'password_hash': hash_password(password)})
+            st.session_state['user'] = user.title_company
+            set_cookie('logged_in', 'true')
+            set_cookie('user', user.title_company)
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
 
 # Continue with the rest of the app only if logged in
-if st.session_state['logged_in']:
+if st.session_state.get('logged_in', False):
     # Sidebar menu
     menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
-    choice = st.sidebar.selectbox("Add or change detailed information", menu)
+    choice = st.sidebar.selectbox("add/change/delete information", menu)
 
     menuu = ['close', "create video"]
-    choicec = st.sidebar.selectbox("Static", menuu)
+    choicec = st.sidebar.selectbox("static", menuu)
 
 
 

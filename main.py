@@ -64,20 +64,23 @@ def authenticate(username, password):
     user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == hash_password(password)).first()
     return user
 
+# Initialize session state if not already set
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['user'] = None
 
-# To check if user data is stored in cookies
+# Check if user data is stored in query parameters and log in if valid
 if not st.session_state['logged_in']:
-    if 'username' in st.experimental_get_query_params() and 'password_hash' in st.experimental_get_query_params():
-        username = st.experimental_get_query_params()['username'][0]
-        password_hash = st.experimental_get_query_params()['password_hash'][0]
+    query_params = st.query_params
+    if 'username' in query_params and 'password_hash' in query_params:
+        username = query_params['username']
+        password_hash = query_params['password_hash']
         user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password_hash).first()
         if user:
             st.session_state['logged_in'] = True
             st.session_state['user'] = user
 
+# If logged in, show user info and logout button
 if st.session_state['logged_in']:
     user = st.session_state['user']
     st.sidebar.write(f"Logged in as {user.title_company}")
@@ -85,10 +88,11 @@ if st.session_state['logged_in']:
     if st.sidebar.button("Log Out"):
         st.session_state['logged_in'] = False
         st.session_state['user'] = None
-        # Clear cookies
-        st.experimental_set_query_params()
+        # Clear query parameters to log out
+        st.query_params.clear()
         st.experimental_rerun()
 
+# If not logged in, show login form
 else:
     st.sidebar.subheader("Login")
     username = st.sidebar.text_input("Email")
@@ -98,8 +102,8 @@ else:
         if user:
             st.session_state['logged_in'] = True
             st.session_state['user'] = user
-            # Set cookies
-            st.experimental_set_query_params(username=username, password_hash=hash_password(password))
+            # Set query parameters to persist login
+            st.query_params.update({'username': username, 'password_hash': hash_password(password)})
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
@@ -107,10 +111,10 @@ else:
 # Continue with the rest of the app only if logged in
 if st.session_state['logged_in']:
     # Sidebar menu
-    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title',"Documents term of financing"]
+    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
     choice = st.sidebar.selectbox("Add or change detailed information", menu)
 
-    menuu = ['close',"create video"]
+    menuu = ['close', "create video"]
     choicec = st.sidebar.selectbox("Static", menuu)
 
 

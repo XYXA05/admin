@@ -11,6 +11,8 @@ from sqlalchemy import create_engine
 from models import Base, Documents_Terms_of_financing, File_new_build_apartment, File_new_build_apartment_ItemCreate_about, File_new_build_apartment_construction_monitoring, ItemCreate_about, UserCreate, ItemCreate, File_description, UserCreate_File, ItemsCreateDescription, File_new_build_apartment_aerial_survey_360, Documents_title, UserCreate_News, User_3D_File_model
 import ssl
 import database
+from http.cookies import SimpleCookie
+import datetime
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_video(image_url, image_end_url, prompt):
@@ -59,9 +61,39 @@ def authenticate(username, password):
     user = session.query(UserCreate).filter(UserCreate.email == username, UserCreate.hashed_password == password).first()
     return user
 
+def set_cookie(key, value, expires_days=7):
+    expires = datetime.datetime.now() + datetime.timedelta(days=expires_days)
+    cookie = SimpleCookie()
+    cookie[key] = value
+    cookie[key]["expires"] = expires.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+    st.experimental_set_query_params(**{"cookie": cookie.output(header="", sep="; ")})
+
+def get_cookie(key):
+    query_params = st.experimental_get_query_params()
+    cookie_string = query_params.get("cookie", [""])[0]
+    if cookie_string:
+        cookie = SimpleCookie(cookie_string)
+        if key in cookie:
+            return cookie[key].value
+    return None
+
+def delete_cookie(key):
+    set_cookie(key, "", expires_days=-1)
+
+# Initialize session state if not already done
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['user'] = None
+
+# Check if a user is already logged in through cookies
+if not st.session_state['logged_in']:
+    user_email = get_cookie("user_email")
+    user_password = get_cookie("user_password")
+    if user_email and user_password:
+        user = authenticate(user_email, user_password)
+        if user:
+            st.session_state['logged_in'] = True
+            st.session_state['user'] = user
 
 if st.session_state['logged_in']:
     user = st.session_state['user']
@@ -70,6 +102,8 @@ if st.session_state['logged_in']:
     if st.sidebar.button("Log Out"):
         st.session_state['logged_in'] = False
         st.session_state['user'] = None
+        delete_cookie("user_email")
+        delete_cookie("user_password")
         st.experimental_rerun()
 
 else:
@@ -81,6 +115,8 @@ else:
         if user:
             st.session_state['logged_in'] = True
             st.session_state['user'] = user
+            set_cookie("user_email", username)
+            set_cookie("user_password", password)
             st.experimental_rerun()
         else:
             st.sidebar.error("Invalid username or password")
@@ -88,10 +124,10 @@ else:
 # Continue with the rest of the app only if logged in
 if st.session_state['logged_in']:
     # Sidebar menu
-    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title',"Documents term of finansing"]
-    choice = st.sidebar.selectbox("add change dalit information", menu)
+    menu = ['close', "Users", "Items", 'Items Create Description', 'Aerial Survey 360', "construction monitoring", 'Documents Title', "Documents term of financing"]
+    choice = st.sidebar.selectbox("add/change/delete information", menu)
 
-    menuu = ['close',"create video"]
+    menuu = ['close', "create video"]
     choicec = st.sidebar.selectbox("static", menuu)
 
 
